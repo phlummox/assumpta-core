@@ -1,0 +1,116 @@
+
+version: 2.1
+
+# TODO: ensure that a source distribution
+# (made with stack sdist) also builds properly,
+# not just that a "git clone" does.
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - ghc-8_0
+
+jobs:
+  build:
+    docker:
+      # don't care about golang, but comes with certs
+      # and tools pre-installed
+      - image: circleci/golang:1.9.2-stretch
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore cached dependencies
+          keys:
+            - hs-cache-{{ checksum "assumpta-core.cabal" }}
+            - hs-cache-
+      - run:
+          name: Setup environment variables
+          command: |
+            echo "export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.local/bin:/opt/alex/$ALEXVER/bin:/opt/happy/$HAPPYVER/bin:$HOME/.cabal/bin:$PATH" >> $BASH_ENV
+            echo "export LINUX64_STACK=https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz" >> $BASH_ENV
+            echo "export STACK_RESOLVER=lts-14.21" >> $BASH_ENV
+      - run:
+          name: setup
+          command: |
+            set -x
+            mkdir -p "$HOME/.local/bin"
+            sudo apt-get update
+            sudo apt-get -y install libgmp-dev libtinfo-dev
+            if [ ! -x /home/root/.local/bin/stack ] ; then
+              curl -L "${LINUX64_STACK}" | tar xz --wildcards --strip-components=1 -C $HOME/.local/bin '*/stack'
+            fi
+            stack --version
+      - run:
+          name:     stack setup
+          command:  stack --resolver="${STACK_RESOLVER}" setup
+      - run:
+          name:     stack build
+          command:  stack --resolver="${STACK_RESOLVER}" build
+      - run:
+          name:     run tests
+          command:  stack --resolver="${STACK_RESOLVER}" test
+      - save_cache:
+          name: Cache dependencies for stack generally
+          key: hs-cache-
+          paths:
+            - "/root/.stack"
+            - "/root/.ghc"
+            - "/root/.cabal"
+            - "/root/.local"
+      - save_cache:
+          name: Cache dependencies for project
+          key: hs-cache-{{ checksum "assumpta-core.cabal" }}
+          paths:
+            - ".stack-work"
+
+  ghc-8_0:
+    environment:
+      # TODO: factor out env vars
+      GHCVER: 8.0
+      CABALVER: 3.0
+
+    docker:
+      # don't care about golang, but comes with certs
+      # and tools pre-installed
+      - image: phadej/ghc:8.0-stretch-slim
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore cached dependencies
+          keys:
+            - ghc-cache-{{ .Environment.CIRCLE_JOB }}-{{ checksum "assumpta-core.cabal" }}
+            - ghc-cache-{{ .Environment.CIRCLE_JOB }}-
+      - run:
+          name: Setup environment variables
+          command: |
+            echo "export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.local/bin:/opt/alex/$ALEXVER/bin:/opt/happy/$HAPPYVER/bin:$HOME/.cabal/bin:$PATH" >> $BASH_ENV
+      - run:
+          name: setup, build and test
+          command: |
+            set -x
+            mkdir -p "$HOME/.local/bin"
+            # wtf is with cabal 3. Requires all sorts of stupid
+            # flags it didn't before.
+            apt-get update
+            apt-get purge -y cabal-install-3.0
+            apt-get install -y --no-install-recommends cabal-install-2.4
+            export PATH=/opt/cabal/2.4/bin:$PATH
+            alias cabal=/opt/cabal/2.4/bin/cabal
+            #
+            source ./.circleci/cabal-build.sh
+      - save_cache:
+          name: Cache dependencies for stack generally
+          key: ghc-cache-{{ .Environment.CIRCLE_JOB }}-
+          paths:
+            - "/root/.stack"
+            - "/root/.ghc"
+            - "/root/.cabal"
+            - "/root/.local"
+      - save_cache:
+          name: Cache dependencies for project
+          key: ghc-cache-{{ .Environment.CIRCLE_JOB }}-{{ checksum "assumpta-core.cabal" }}
+          paths:
+            - "dist"
+
