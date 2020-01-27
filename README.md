@@ -1,6 +1,4 @@
-# assumpta-core
-
-# assumpta-ci [![Hackage version](https://img.shields.io/hackage/v/assumpta-ci.svg?label=Hackage)](https://hackage.haskell.org/package/assumpta-ci) [![Linux Build Status](https://img.shields.io/travis/com/phlummox/assumpta-core.svg?label=Linux%20build)](https://travis-ci.com/phlummox/assumpta-core) [![phlummox](https://circleci.com/gh/phlummox/assumpta-core.svg?style=svg)](https://circleci.com/gh/phlummox/assumpta-core)
+# assumpta-core [![Hackage version](https://img.shields.io/hackage/v/assumpta-ci.svg?label=Hackage)](https://hackage.haskell.org/package/assumpta-ci) [![Linux Build Status](https://img.shields.io/travis/com/phlummox/assumpta-core.svg?label=Linux%20build)](https://travis-ci.com/phlummox/assumpta-core) [![phlummox](https://circleci.com/gh/phlummox/assumpta-core.svg?style=svg)](https://circleci.com/gh/phlummox/assumpta-core)
 
 A library for constructing SMTP clients, which provides the core functionality
 for [assumpta](https://hackage.haskell.org/package/assumpta).
