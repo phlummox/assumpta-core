@@ -38,7 +38,7 @@ jobs:
             mkdir -p "$HOME/.local/bin"
             sudo apt-get update
             sudo apt-get -y install libgmp-dev libtinfo-dev
-            if [ ! -x /home/root/.local/bin/stack ] ; then
+            if [ ! -x /home/home/circleci/.local/bin/stack ] ; then
               curl -L "${LINUX64_STACK}" | tar xz --wildcards --strip-components=1 -C $HOME/.local/bin '*/stack'
             fi
             stack --version
@@ -50,15 +50,15 @@ jobs:
           command:  stack --resolver="${STACK_RESOLVER}" build
       - run:
           name:     run tests
-          command:  stack --resolver="${STACK_RESOLVER}" test --flag assumpta-core:test-doctests
+          command:  ./scripts/stack-test.sh "${STACK_RESOLVER}"
       - save_cache:
           name: Cache dependencies for stack generally
           key: hs-cache-
           paths:
-            - "/root/.stack"
-            - "/root/.ghc"
-            - "/root/.cabal"
-            - "/root/.local"
+            - "/home/circleci/.stack"
+            - "/home/circleci/.ghc"
+            - "/home/circleci/.cabal"
+            - "/home/circleci/.local"
       - save_cache:
           name: Cache dependencies for project
           key: hs-cache-{{ checksum "assumpta-core.cabal" }}
@@ -104,10 +104,10 @@ jobs:
           name: Cache dependencies for stack generally
           key: ghc-cache-{{ .Environment.CIRCLE_JOB }}-
           paths:
-            - "/root/.stack"
-            - "/root/.ghc"
-            - "/root/.cabal"
-            - "/root/.local"
+            - "/home/circleci/.stack"
+            - "/home/circleci/.ghc"
+            - "/home/circleci/.cabal"
+            - "/home/circleci/.local"
       - save_cache:
           name: Cache dependencies for project
           key: ghc-cache-{{ .Environment.CIRCLE_JOB }}-{{ checksum "assumpta-core.cabal" }}

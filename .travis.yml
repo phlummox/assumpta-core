@@ -71,7 +71,7 @@ script:
         echo "You're still here? It's over. Go home."
       ;;
       stack)
-        stack --resolver="${STACK_RESOLVER}" test --flag assumpta-core:test-doctests
+        ./scripts/stack-test.sh "${STACK_RESOLVER}"
       ;;
       *)
     esac
