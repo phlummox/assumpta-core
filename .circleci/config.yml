@@ -50,7 +50,7 @@ jobs:
           command:  stack --resolver="${STACK_RESOLVER}" build
       - run:
           name:     run tests
-          command:  stack --resolver="${STACK_RESOLVER}" test
+          command:  stack --resolver="${STACK_RESOLVER}" test --flag assumpta-core:test-doctests
       - save_cache:
           name: Cache dependencies for stack generally
           key: hs-cache-
