@@ -8,5 +8,5 @@ if [ "$#" -ne 1 ]; then
 fi
 
 export STACK_RESOLVER="$1"
-stack --resolver="${STACK_RESOLVER}" test --flag assumpta-core:test-doctests
+stack --resolver="${STACK_RESOLVER}" test --flag assumpta-core:stack-based-tests
 

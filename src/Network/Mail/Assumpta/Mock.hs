@@ -15,6 +15,9 @@ Sample use:
 >>> runMockSmtp (noop >> quit)
 "NOOP\r\nQUIT\r\n"
 
+For a slightly longer example, see \"simple-client-session-mock-bs.hs"
+in the \"examples" directory.
+
 -}
 
 module Network.Mail.Assumpta.Mock
