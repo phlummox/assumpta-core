@@ -1,6 +1,9 @@
 
 # TODO
 
+Need Eq, Show instances fo ReplyLine, SmtpError, else testing
+is hard
+
 ## Add RFC references
 
 Justify the code with reference to relevant RFCs.
@@ -11,7 +14,12 @@ The only data type we serialize is SMTP Commands, and
 it's handled by just one function, toByteString.
 So I think it's not worth the trouble of creating instances
 for e.g. the `cereal` package. 'AUTH' commands are serialized 
-separately (and there is only one AUTH command implemented). 
+separately (and there is only one AUTH command implemented).
+
+## Two-way mock
+
+A mock that simulates server responses as well, not just
+recording client commands.
 
 ## Improve error messages
 
