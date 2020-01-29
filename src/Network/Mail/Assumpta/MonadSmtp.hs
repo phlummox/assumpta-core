@@ -397,11 +397,10 @@ vrfy recipient =
 -- convenience func. Expects a raw 'ByteString'
 -- that can be sent after a data command.
 --
--- sends MAIL FROM, RCPT TO commands as appropriate,
--- expecting 250 in each case.
--- Then sends data, likewise expecting 250.
+-- Just a sequence of 'mailFrom' the sender, 'rcptTo' calls
+-- for each recipient, then 'data_' of the message.
 --
--- We don't alter the content of @message@, expect insofar
+-- We don't alter the content of @message@, except insofar
 -- as specified by RFC, p. 36, namely:
 -- If the body content passed does not end in @\<CRLF>@, a
 -- client must either reject the message as invalid or 
@@ -419,7 +418,6 @@ sendRawMail ::
       ByteString -> t ByteString -> ByteString -> m ()
 sendRawMail sender recipients message = do
   mailFrom sender
-  expectCode 250
   mapM_ rcptTo recipients
 
   let messageEnd =
