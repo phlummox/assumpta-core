@@ -2,7 +2,7 @@ cabal-version: 1.12
 
 
 name:           assumpta-core
-version:        0.1.0.1
+version:        0.1.0.2
 synopsis:       Core functionality for an SMTP client
 description:    A library for constructing SMTP clients, which provides the
                 core functionality for
